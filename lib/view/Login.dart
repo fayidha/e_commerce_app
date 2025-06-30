@@ -3,11 +3,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
+
+  bool _obscurePassword = true;
 
   Future<void> login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
@@ -27,7 +33,7 @@ class LoginScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Form(
-          key: _formKey, // Attach the key to Form
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
@@ -46,8 +52,20 @@ class LoginScreen extends StatelessWidget {
               ),
               TextFormField(
                 controller: passCtrl,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Password is required';
